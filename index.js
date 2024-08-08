@@ -23,8 +23,7 @@ router.get("^/$|/eShop", (req, res) => {
     try {
       const strQry = `
               select firstName, lastName, age, emailAdd
-              from Users
-              where userID = 1;
+              from Users;
               `;
       db.query(strQry, (err, results) => {
         if (err) throw new Error(`Unable to fetch all users`);
@@ -39,30 +38,7 @@ router.get("^/$|/eShop", (req, res) => {
         msg: e.message,
       });
     }
-  })
-
-  router.get("/user/:id", (req, res) => {
-    try {
-      const strQry = `
-            select userID, firstName, lastName, age, emailAdd
-            from Users
-            where userID = ${req.params.id};
-               `
-      db.query(strQry, (err, results) => {
-          if (err) throw new Error(err);
-      //   if (err) throw new Error('Issue when retrieving a user');
-        res.json({
-          status: res.statusCode,
-          results: results[0],
-        })
-      });
-    } catch (e) {
-      res.json({
-        status: 404,
-        msg: e.message,
-      });
-    }
-  })
+  });
   //listen is a function that starts the server
   app.listen(port, () => {
     console.log(`Server is running on ${port}`);
