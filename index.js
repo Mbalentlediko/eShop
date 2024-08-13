@@ -162,6 +162,8 @@ router.post('/login', (req, res) => {
       const { emailAdd, pwd } = req.body
       const strQry = `
       SELECT userID, firstName, lastName, age, emailAdd, pwd , UserRole,ProfileURL
+
+      
       FROM Users
       WHERE emailAdd = '${emailAdd}';
       `
