@@ -24,6 +24,29 @@ fetchProducts(req,res) {
         }
       
 }
+recentProducts(req,res){
+    try {
+        const strQry = `
+        SELECT productID,prodName,category,prodDescription,prodURL,amount
+        FROM Products
+        ORDER BY productID DESC
+        LIMIT 5;
+        ` 
+        db.query(strQry,(err,results)=>{
+            if (err) throw new Error('Unable to retrieve recent products') 
+            res.json({
+                status: res.statusCode,
+                results
+            })
+        })
+    } catch (e) {
+        res.json({
+            status: 404,
+            msg: e.message
+        })
+    }
+  
+}
 fetchProduct(req,res) {
     try {
         const strQry = `
@@ -45,50 +68,35 @@ fetchProduct(req,res) {
         })
     }
 }
-async registerProduct(req,res) {
+addProduct(req, res) {
     try {
-        let data = req.body
-        data.pwd = await hash(data.pwd, 12)
-        // Payload
-        let product = {
-            prodName: data.prodName,
-            category: data.category
-        }
-        let strQry = `
+      let strQry = `
         INSERT INTO Products
-        SET ?;
-        `
-        db.query(strQry, [data], (err) => {
-            if (err) {
-                res.json({
-                    status: res.statusCode,
-                    msg: 'This product already exists'
-                })
-            } else {
-                    msg: 'You are now registered.'
-                
-            }
-        })
-    } catch (e) {
-        // 'Unable to add a new product.'
-        res.json({
-            status: 404,
-            msg: e.message
-        })
-    }
-}
-async updateProducts(req,res) {
-    try {
-        let data = req.body;
-        if (data.prodName) {
-          data.prodName = await hash(data.prodName, 12);
+          SET ?
+          `;
+      db.query(strQry, [req,body], (err) => {
+        if (err) throw new Error("Unable to add a new Product");{
+          res.json({
+            status: res.statusCode,
+            msg: "Product was added successfully",
+          });
         }
+      });
+    } catch (e) {
+      res.json({
+        status: 404,
+        msg: e.message,
+      });
+    }
+  }
+ updateProducts(req,res) {
+    try {
         const strQry = `
         update Products
         SET ?
         where productID = ${req.params.id};
         `;
-        db.query(strQry, [data], (err) => {
+        db.query(strQry, [req.data], (err) => {
           if (err) throw new Error('Unable to update product');
           res.json({
             status: res.statusCode,
@@ -96,6 +104,7 @@ async updateProducts(req,res) {
           })
         })
       } catch (e) {
+        
         res.json({
           status: 404,
           msg: e.message
