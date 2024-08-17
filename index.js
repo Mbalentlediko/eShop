@@ -18,6 +18,7 @@ app.use('/user', userRouter),
  express.static('./static'),
 express.json(),
 express.urlencoded({
+  
     extended:true
 })
 app.use(bodyParser.json())
