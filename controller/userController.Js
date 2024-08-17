@@ -5,6 +5,7 @@ import { users } from '../model/Index.js'
 
 const userRouter = express.Router()
 userRouter.use(bodyParser.json())
+
 userRouter.get('/', (req, res) => {
     users.fetchUsers(req, res)
 })
@@ -13,7 +14,7 @@ userRouter.get('/:id', (req, res) => {
     users.fetchUser(req, res)
 })
 
-userRouter.post('/register', (req, res) => {
+userRouter.post('./register', (req, res) => {
     users.registerUser(req, res)
 })
 
@@ -25,11 +26,11 @@ userRouter.delete('/:id',(req, res) => {
     users.deleteUser(req, res)
 })
 
-userRouter.post('login',(req, res)=> {
+userRouter.post('/login',(req, res)=> {
     users.login(req, res)
 })
 
-export {userRouter}
+export {express,userRouter}
 
 
 
