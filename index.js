@@ -1,28 +1,32 @@
-import express from 'express'
+import { userRouter } from './controller/userController.js'
+import { productRouter } from './controller/productController.js'
+import express from "express"
 import path from 'path'
-import { connection as db } from './config/index.js'
-import {createToken} from './middleware/authenticateuser.js'
-import{compare, hash} from 'bcrypt'
-import bodyParser  from 'body-parser'
+import bodyParser from 'body-parser'
 // Create an express app
 const app = express()
-const port = +process.env.port
-const router = express.Router()
+const port = +process.env.PORT
+
 
 // Middleware 
-app.use(router,
+app.use((req,res, next)=> {
+  res.header('Access-Control-Allow-Origin','*');
+  next()
+})
+app.use('/user', userRouter),
+ app.use('/product', productRouter),
  express.static('./static'),
 express.json(),
 express.urlencoded({
     extended:true
-}))
-router.use(bodyParser.json())
+})
+app.use(bodyParser.json())
 
 // Endpoint
-router.get('^/$|/eShop', (req, res) => {
+app.get('^/$|/eShop', (req, res) => {
   res.status(200).sendFile(path.resolve('./static/html/index.html'))
 })
-router.get('/users', (req, res) => {
+app.get('/users', (req, res) => {
   try {
       const strQry = `
       SELECT firstName, lastName, age, emailAdd ,UserRole,ProfileURL
@@ -44,7 +48,7 @@ router.get('/users', (req, res) => {
 })
 
 
-router.get('/user/:id', (req, res) => { 
+app.get('/user/:id', (req, res) => { 
   try {
       const strQry = `
       SELECT userID, firstName, lastName, age, emailAdd, UserRole,ProfileURL
@@ -66,7 +70,7 @@ router.get('/user/:id', (req, res) => {
   }
 })
 
-router.post('/register', async (req, res) => {
+app.post('/register', async (req, res) => {
   try {
       let data = req.body
       data.pwd = await hash(data.pwd, 12)
@@ -103,7 +107,7 @@ router.post('/register', async (req, res) => {
 })
 
 
-router.patch('/user/:id', async (req, res) => {
+app.patch('/user/:id', async (req, res) => {
   try {
     let data = req.body;
     if (data.pwd) {
@@ -129,7 +133,7 @@ router.patch('/user/:id', async (req, res) => {
   }
 })
 
-router.delete('/user/:id', (req,res) => {
+app.delete('/user/:id', (req,res) => {
   try {
     const strQry = `
     DELETE FROM Users
@@ -150,14 +154,14 @@ router.delete('/user/:id', (req,res) => {
 })
 
 
-router.get('*', (req, res) => { 
+app.get('*', (req, res) => { 
   res.json({
       status: 404,
       msg: 'Resource not found'
   })
 })
 
-router.post('/login', (req, res) => {
+app.post('/login', (req, res) => {
   try {
       const { emailAdd, pwd } = req.body
       const strQry = `

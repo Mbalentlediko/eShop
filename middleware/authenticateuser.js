@@ -17,7 +17,7 @@ function createToken(user) {
  }
 )
 }
-function verifyAToken(req,res,next) {
+function verifyToken(req,res,next) {
     const token = req?.headers["authorization"]
     if (token) {
         if (verify(token, process.env.SECRET_KEY)) {
@@ -38,5 +38,6 @@ function verifyAToken(req,res,next) {
 }
 
 export{
-    createToken
+    createToken,
+    verifyToken
 }

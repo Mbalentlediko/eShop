@@ -1,5 +1,5 @@
-import { connection as db } from './config/index.js'
-import{compare, hash} from 'bcrypt'
+import { connection as db } from '../config/index.js'
+
 
 class Products {
 fetchProducts(req,res) {
@@ -69,12 +69,13 @@ fetchProduct(req,res) {
     }
 }
 addProduct(req, res) {
+
     try {
       let strQry = `
         INSERT INTO Products
-          SET ?
+        SET ?;
           `;
-      db.query(strQry, [req,body], (err) => {
+      db.query(strQry, [req.body], (err) => {
         if (err) throw new Error("Unable to add a new Product");{
           res.json({
             status: res.statusCode,
@@ -92,19 +93,20 @@ addProduct(req, res) {
  updateProducts(req,res) {
     try {
         const strQry = `
-        update Products
+        UPDATE Products
         SET ?
-        where productID = ${req.params.id};
+        WHERE productID = ${req.params.id};
+
         `;
-        db.query(strQry, [req.data], (err) => {
-          if (err) throw new Error('Unable to update product');
+        db.query(strQry, [req.body], (err) => {
+          if (err) throw new Error(err);
           res.json({
             status: res.statusCode,
             msg: 'Congratulations you have successfully updated the product!'
           })
         })
       } catch (e) {
-        
+
         res.json({
           status: 404,
           msg: e.message
