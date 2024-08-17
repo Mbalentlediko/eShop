@@ -15,4 +15,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.card {
+    width: 18rem;
+}
+</style>
